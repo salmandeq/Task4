@@ -5,28 +5,29 @@ pipeline {
         maven 'Maven3' 
     }
 
+    options {
+        retry(2)
+        timeout(time: 15, unit: 'MINUTES')
+    }
+
     stages {
         stage('Build & Test') {
             steps {
-                // If your code is in a folder (e.g., 'my-app'), use 'dir'
-                // Replace 'YOUR_FOLDER_NAME' with the actual folder name in your repo
-                dir('YOUR_FOLDER_NAME') {
-                    bat 'mvn clean install'
-                }
-                
-                // If your code is in the root, just check if the pom.xml is named correctly
+                // Since pom.xml is in the root, we run mvn directly
+                bat 'mvn clean install'
             }
         }
     }
-    
+
     post {
         always {
             script {
-                if (fileExists('**/target/surefire-reports')) {
+                // Collect results from the target folder created by Maven
+                if (fileExists('target/surefire-reports')) {
                     junit '**/target/surefire-reports/*.xml'
                 }
-                if (fileExists('**/target/*.jar')) {
-                    archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+                if (fileExists('target/*.jar')) {
+                    archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
                 }
             }
         }
