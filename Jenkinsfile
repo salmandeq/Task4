@@ -32,7 +32,8 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube-Server') {
-                    bat "mvn -f Task4/pom.xml org.sonarsource.scanner.maven:sonar-maven-plugin:3.3.0.603:sonar -Dsonar.login=${SONAR_TOKEN}"
+                    // Using the modern plugin with a fallback property for older server communication
+                    bat "mvn -f Task4/pom.xml org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar -Dsonar.login=${SONAR_TOKEN} -Dsonar.scanner.force-deprecated-java-version=true"
                 }
             }
         }
