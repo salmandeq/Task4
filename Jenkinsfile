@@ -1,7 +1,6 @@
 pipeline {
     agent { label 'java-build-agent' }
     
-    // This tells Jenkins to use the Maven configuration defined in Global Tool Configuration
     tools {
         maven 'Maven3' 
     }
@@ -9,9 +8,27 @@ pipeline {
     stages {
         stage('Build & Test') {
             steps {
-                bat 'mvn clean install'
+                // If your code is in a folder (e.g., 'my-app'), use 'dir'
+                // Replace 'YOUR_FOLDER_NAME' with the actual folder name in your repo
+                dir('YOUR_FOLDER_NAME') {
+                    bat 'mvn clean install'
+                }
+                
+                // If your code is in the root, just check if the pom.xml is named correctly
             }
         }
     }
-    // ... keep the rest of your post actions
+    
+    post {
+        always {
+            script {
+                if (fileExists('**/target/surefire-reports')) {
+                    junit '**/target/surefire-reports/*.xml'
+                }
+                if (fileExists('**/target/*.jar')) {
+                    archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+                }
+            }
+        }
+    }
 }
