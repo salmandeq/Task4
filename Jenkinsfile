@@ -15,27 +15,23 @@ pipeline {
 
         stage('Build') {
             steps {
-                bat 'mvn clean compile -DskipTests'
+                // Add -f Task4/pom.xml to tell Maven where the project is
+                bat 'mvn -f Task4/pom.xml clean compile -DskipTests'
             }
         }
 
         stage('Unit Test') {
             steps {
-                bat 'mvn test'
+                // Add -f Task4/pom.xml here as well
+                bat 'mvn -f Task4/pom.xml test'
             }
         }
 
         /* stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube-Server') {
-                    bat "mvn sonar:sonar"
+                    bat "mvn -f Task4/pom.xml sonar:sonar"
                 }
-            }
-        }
-
-        stage('Deploy to Staging') {
-            steps {
-                echo "Deploying to staging..."
             }
         }
         */
@@ -44,8 +40,9 @@ pipeline {
     post {
         always {
             script {
-                if (fileExists('target/surefire-reports')) {
-                    junit '**/target/surefire-reports/*.xml'
+                // Update path for test results as well
+                if (fileExists('Task4/target/surefire-reports')) {
+                    junit 'Task4/target/surefire-reports/*.xml'
                 }
             }
         }
