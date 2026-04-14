@@ -14,9 +14,15 @@ pipeline {
         
        stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube-Server') {
-                    // Downgrading to 3.2 which is the most stable 'old' version
-                    bat "mvn -f Task4/pom.xml org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar -Dsonar.login=${SONAR_TOKEN} -Dsonar.java.binaries=target/classes"
+                script {
+                    def scannerHome = tool 'SonarScanner' // Make sure 'SonarScanner' is the name in Global Tool Config
+                    withSonarQubeEnv('SonarQube-Server') {
+                        bat "${scannerHome}/bin/sonar-scanner.bat " +
+                            "-Dsonar.projectKey=Task4 " +
+                            "-Dsonar.sources=Task4/src/main/java " +
+                            "-Dsonar.java.binaries=Task4/target/classes " +
+                            "-Dsonar.login=${SONAR_TOKEN}"
+                    }
                 }
             }
         }
