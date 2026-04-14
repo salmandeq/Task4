@@ -6,6 +6,7 @@ pipeline {
     }
 
     options {
+        // Point 6: Retrying helps if there are network or agent glitches
         retry(2)
         timeout(time: 15, unit: 'MINUTES')
     }
@@ -13,8 +14,9 @@ pipeline {
     stages {
         stage('Build & Test') {
             steps {
-                // Since pom.xml is in the root, we run mvn directly
-                bat 'mvn clean install'
+                // Point 7: Running Maven by pointing directly to the pom.xml location
+                // This command tells Maven to look inside the Task4 folder for the pom.xml
+                bat 'mvn -f Task4/pom.xml clean install'
             }
         }
     }
@@ -22,12 +24,12 @@ pipeline {
     post {
         always {
             script {
-                // Collect results from the target folder created by Maven
-                if (fileExists('target/surefire-reports')) {
+                // Using wildcards (**) ensures results are found regardless of folder depth
+                if (fileExists('**/target/surefire-reports')) {
                     junit '**/target/surefire-reports/*.xml'
                 }
-                if (fileExists('target/*.jar')) {
-                    archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                if (fileExists('**/target/*.jar')) {
+                    archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
                 }
             }
         }
