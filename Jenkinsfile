@@ -15,8 +15,8 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube-Server') {
-                    // Using version 3.4 to bridge the gap between "too old" and "too new"
-                    bat "mvn -f Task4/pom.xml org.sonarsource.scanner.maven:sonar-maven-plugin:3.4.0.905:sonar -Dsonar.login=${SONAR_TOKEN} -Dsonar.java.binaries=target/classes"
+                    // Back to 3.3.0.603 but with the 'force-deprecated' flag to bypass missing batch classes
+                    bat "mvn -f Task4/pom.xml org.sonarsource.scanner.maven:sonar-maven-plugin:3.3.0.603:sonar -Dsonar.login=${SONAR_TOKEN} -Dsonar.scanner.force-deprecated-java-version=true"
                 }
             }
         }
