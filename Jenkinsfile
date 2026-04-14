@@ -14,11 +14,10 @@ pipeline {
             }
         }
 
-        stage('Build & Test') {
+        stage('Checkout') {
             steps {
-                // Assuming you are using Maven for your Java project
-                // Use 'bat' for Windows agents or 'sh' for Linux
-                bat 'mvn clean install' 
+                // Added branch: 'main' to match your GitHub repo
+                git branch: 'main', url: 'https://github.com/salmandeq/Task4.git'
             }
         }
     }
