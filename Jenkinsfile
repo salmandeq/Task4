@@ -6,6 +6,11 @@ pipeline {
         jdk 'java21'
     }
 
+    environment {
+        // This matches the ID "Sonar-Token" from your screenshot
+        SONAR_TOKEN = credentials('Sonar-Token')
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -15,42 +20,42 @@ pipeline {
 
         stage('Build') {
             steps {
-                // Add -f Task4/pom.xml to tell Maven where the project is
                 bat 'mvn -f Task4/pom.xml clean compile -DskipTests'
             }
         }
 
         stage('Unit Test') {
             steps {
-                // Add -f Task4/pom.xml here as well
                 bat 'mvn -f Task4/pom.xml test'
             }
         }
 
-        /* stage('SonarQube Analysis') {
+        stage('SonarQube Analysis') {
             steps {
+                // Ensure the name 'SonarQube-Server' matches Manage Jenkins -> System
                 withSonarQubeEnv('SonarQube-Server') {
-                    bat "mvn -f Task4/pom.xml sonar:sonar"
+                    bat "mvn -f Task4/pom.xml sonar:sonar -Dsonar.login=${SONAR_TOKEN}"
                 }
             }
         }
-        */
+
+        stage('Deploy to Staging') {
+            steps {
+                echo "Build and Analysis complete. Ready for deployment."
+            }
+        }
     }
 
     post {
         always {
             script {
-                // Update path for test results as well
                 if (fileExists('Task4/target/surefire-reports')) {
                     junit 'Task4/target/surefire-reports/*.xml'
                 }
             }
         }
         success {
-            echo 'Build and Tests passed successfully!'
-        }
-        failure {
-            echo 'Pipeline failed. Check the console output.'
+            echo 'CI/CD Pipeline finished successfully!'
         }
     }
 }
