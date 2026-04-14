@@ -7,7 +7,6 @@ pipeline {
     }
 
     environment {
-        // This matches the ID "Sonar-Token" from your screenshot
         SONAR_TOKEN = credentials('Sonar-Token')
     }
 
@@ -32,9 +31,8 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                // Ensure the name 'SonarQube-Server' matches Manage Jenkins -> System
                 withSonarQubeEnv('SonarQube-Server') {
-                    bat "mvn -f Task4/pom.xml sonar:sonar -Dsonar.login=${SONAR_TOKEN}"
+                    bat "mvn -f Task4/pom.xml org.sonarsource.scanner.maven:sonar-maven-plugin:3.3.0.603:sonar -Dsonar.login=${SONAR_TOKEN}"
                 }
             }
         }
