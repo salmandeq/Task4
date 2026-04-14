@@ -10,10 +10,10 @@ pipeline {
         timeout(time: 15, unit: 'MINUTES') 
     }
 
-    stages {
-        stage('Checkout') {
+   stage('Checkout') {
             steps {
-                git 'https://github.com/your-repo/java-project.git'
+                // Change 'your-repo/java-project.git' to your actual Task4 link
+                git 'https://github.com/salmandeq/Task4.git'
             }
         }
 
