@@ -15,8 +15,8 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube-Server') {
-                    // Force the version 3.3.0.603 and use -U to fix the missing class error
-                    bat "mvn -f Task4/pom.xml -U org.sonarsource.scanner.maven:sonar-maven-plugin:3.3.0.603:sonar -Dsonar.login=${SONAR_TOKEN}"
+                    // We use the standalone scanner property to bypass Maven plugin version conflicts
+                    bat "mvn -f Task4/pom.xml sonar:sonar -Dsonar.login=${SONAR_TOKEN} -Dsonar.java.binaries=target/classes"
                 }
             }
         }
