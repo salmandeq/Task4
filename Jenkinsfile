@@ -2,22 +2,20 @@ pipeline {
     agent { label 'java-build-agent' }
 
     options {
+        // Point 6: Retry logic for offline agents
         retry(2)
         timeout(time: 15, unit: 'MINUTES')
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                // Corrected the URL to your actual repo
-                git 'https://github.com/salmandeq/Task4.git'
-            }
-        }
+        // We removed the manual 'Checkout' stage to avoid the duplicate name error.
+        // Jenkins handles the checkout automatically.
 
-        stage('Checkout') {
+        stage('Build & Test') {
             steps {
-                // Added branch: 'main' to match your GitHub repo
-                git branch: 'main', url: 'https://github.com/salmandeq/Task4.git'
+                // Point 7: Running the Maven build
+                // Using 'bat' because your agents are Windows-based
+                bat 'mvn clean install' 
             }
         }
     }
@@ -25,7 +23,7 @@ pipeline {
     post {
         always {
             script {
-                // Only records results if the folder exists to avoid errors
+                // Point 7: Collect artifacts back to Master
                 if (fileExists('target/surefire-reports')) {
                     junit '**/target/surefire-reports/*.xml'
                 }
@@ -34,8 +32,5 @@ pipeline {
                 }
             }
         }
-        failure {
-            echo "Build failed on the agent. Check connectivity or code errors."
-        }
     }
-} // Final closing bracket for the pipeline
+}
