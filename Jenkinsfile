@@ -15,8 +15,8 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube-Server') {
-                    // We use the standalone scanner property to bypass Maven plugin version conflicts
-                    bat "mvn -f Task4/pom.xml sonar:sonar -Dsonar.login=${SONAR_TOKEN} -Dsonar.java.binaries=target/classes"
+                    // Using version 3.4 to bridge the gap between "too old" and "too new"
+                    bat "mvn -f Task4/pom.xml org.sonarsource.scanner.maven:sonar-maven-plugin:3.4.0.905:sonar -Dsonar.login=${SONAR_TOKEN} -Dsonar.java.binaries=target/classes"
                 }
             }
         }
