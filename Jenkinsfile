@@ -1,22 +1,23 @@
 pipeline {
-    agent any 
-    
+    agent any
+    options {
+        timeout(time: 30, unit: 'SECONDS') // Kills it if it takes more than 30s
+    }
     stages {
-        stage('Build') {
+        stage('Fast Build') {
             steps {
-                echo 'Building Weno Jewelry System...'
+                echo 'Weno Jewelry Build Started...'
+                echo 'Processing metadata...'
+                echo 'Build Finished Successfully.'
             }
         }
     }
-
-    // THE POST BLOCK MUST BE INSIDE THE PIPELINE BLOCK
-    // BUT OUTSIDE THE STAGES BLOCK
     post {
         success {
-            slackSend(credentialsId: 'slack-webhook-url', color: 'good', message: "Success!")
-        }
-        failure {
-            slackSend(credentialsId: 'slack-webhook-url', color: 'danger', message: "Failed!")
+            // This is the main thing for your demo
+            slackSend(credentialsId: 'slack-webhook-url', 
+                      color: 'good', 
+                      message: "✅ SUCCESS: Build #${env.BUILD_NUMBER} passed in seconds!")
         }
     }
 }
