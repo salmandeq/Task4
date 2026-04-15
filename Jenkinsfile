@@ -1,11 +1,14 @@
 pipeline {
     agent any 
     stages {
-        stage('Final Success Check') {
+        stage('Cleanup') {
+            steps {
+                deleteDir() // Forces a clean start
+            }
+        }
+        stage('Final Success') {
             steps {
                 echo 'Build Successful'
-                echo 'Testing Complete'
-                echo 'Artifacts Ready'
             }
         }
     }
