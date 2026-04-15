@@ -1,23 +1,16 @@
 pipeline {
-    agent any
-    options {
-        timeout(time: 30, unit: 'SECONDS') // Kills it if it takes more than 30s
-    }
+    agent any 
     stages {
-        stage('Fast Build') {
+        stage('Instant Build') {
             steps {
-                echo 'Weno Jewelry Build Started...'
-                echo 'Processing metadata...'
-                echo 'Build Finished Successfully.'
+                echo 'Build successful!'
             }
         }
     }
     post {
         success {
-            // This is the main thing for your demo
-            slackSend(credentialsId: 'slack-webhook-url', 
-                      color: 'good', 
-                      message: "✅ SUCCESS: Build #${env.BUILD_NUMBER} passed in seconds!")
+            // Slack is fast; Email is slow. Let's stick to Slack for the demo.
+            slackSend(credentialsId: 'slack-webhook-url', color: 'good', message: "✅ DONE!")
         }
     }
 }
